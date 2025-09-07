@@ -1,54 +1,40 @@
-import { useEffect } from "react";
-import { useCities } from "../contexts/CitiesContext";
-import { useParams } from "react-router-dom";
-import ButtonBack from "./ButtonBack";
-import Spinner from "./Spinner";
+import { useEffect, useState } from "react";
+import { formatDate } from "../utils/index";
 import styles from "./City.module.css";
-
-const formatDate = (date) =>
-  new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    weekday: "long",
-  }).format(new Date(date));
-
-const flagemojiToPNG = (flag) => {
-  var countryCode = Array.from(flag, (codeUnit) => codeUnit.codePointAt())
-    .map((char) => String.fromCharCode(char - 127397).toLowerCase())
-    .join("");
-  return (
-    <img src={`https://flagcdn.com/24x18/${countryCode}.png`} alt="flag" />
-  );
-};
+import { useNavigate, useParams } from "react-router-dom";
+import { useCities } from "../context/useCities";
+import Button from "./Button";
+import FlagEmojiToPNG from "./FlagEmojiToPNG";
+import Spinner from "./Spinner";
 
 function City() {
-  /* const x = useParams(); // get data from URL params
-  console.log(x);  */
-
-  // We usually immediately desturcture that
-  const { id } = useParams(); // get data from URL params
-  const { getCity, currentCity, isLoading } = useCities();
+  const { city, fetchCity: getCity, loading } = useCities();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(
     function () {
       getCity(id);
     },
-    // getCity will execute each time the context update
     [id, getCity]
   );
 
-  const { cityName, emoji, date, notes } = currentCity;
+  const { cityName, emoji, date, notes } = city || {};
 
-  if (isLoading) return <Spinner />;
+  console.log(city);
+
+  if (loading) return <Spinner />;
 
   return (
     <div className={styles.city}>
       <div className={styles.row}>
         <h6>City name</h6>
-        <h3>
-          <span>{emoji ? flagemojiToPNG(emoji) : ""}</span> {cityName}
-        </h3>
+        {emoji && (
+          <h3>
+            <FlagEmojiToPNG flag={emoji} />
+            <span>{cityName}</span>
+          </h3>
+        )}
       </div>
 
       <div className={styles.row}>
@@ -75,7 +61,9 @@ function City() {
       </div>
 
       <div>
-        <ButtonBack />
+        <Button type="back" onClick={() => navigate(-1)}>
+          &larr; Back
+        </Button>
       </div>
     </div>
   );

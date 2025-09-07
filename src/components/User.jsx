@@ -1,42 +1,49 @@
-import { useAuth } from "../contexts/FakeAuthContext";
+import { useEffect, useState } from "react";
+import { getCurrentUser, logout } from "../../src/services/apiAuth";
 import styles from "./User.module.css";
 import { useNavigate } from "react-router-dom";
-
-const FAKE_USER = {
-  name: "Jack",
-  email: "jack@example.com",
-  password: "qwerty",
-  avatar: "https://i.pravatar.cc/100?u=zz",
-};
+import Spinner from "./Spinner";
 
 function User() {
-  const { logout, isAuthenticated } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState();
   const navigate = useNavigate();
-  const user = FAKE_USER;
 
-  function handleClick() {
-    logout();
+  useEffect(function () {
+    async function getUser() {
+      try {
+        setIsLoading(true);
+        const user = await getCurrentUser();
+        if (user) {
+          setUser(user.user_metadata);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getUser();
+  }, []);
+
+  async function handleClick() {
+    await logout();
     navigate("/");
   }
 
-
   return (
     <div className={styles.user}>
-      <img src={user.avatar} alt={user.name} />
-      <span>Welcome, {user.name}</span>
-      <button onClick={handleClick}>Logout</button>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <img src={user?.avatar || "/default-avatar.jpg"} alt={user?.name} />
+          <span>Welcome, {user?.fullName?.split(" ")[0] || "User"}</span>
+          <button onClick={handleClick}>Logout</button>
+        </>
+      )}
     </div>
   );
 }
 
 export default User;
-
-/*
-CHALLENGE
-
-1) Add `AuthProvider` to `App.jsx`
-2) In the `Login.jsx` page, call `login()` from context
-3) Inside an effect, check whether `isAuthenticated === true`. If so, programatically navigate to `/app`
-4) In `User.js`, read and display logged in user from context (`user` object). Then include this component in `AppLayout.js`
-5) Handle logout button by calling `logout()` and navigating back to `/`
-*/

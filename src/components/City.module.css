@@ -2,22 +2,18 @@
   padding: 2rem 3rem;
   max-height: 70%;
   background-color: var(--color-dark--2);
-  border-radius: 7px;
-
-  /* To fix problem of scroll */
   overflow: auto;
-
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
 
-/* To fix problem of scroll */
-/* .city::-webkit-scrollbar {
-  display: none;
-  scroll-behavior: smooth;
-} */
+  border-radius: 7px;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  -o-border-radius: 7px;
+}
 
 .row {
   display: flex;

@@ -5,6 +5,15 @@
   position: relative;
 }
 
+@media (max-width: 991px) {
+  .mapContainer {
+    padding-bottom: 1rem;
+    flex: none;
+    height: 50vh;
+    width: 100%;
+  }
+}
+
 .map {
   height: 100%;
 }

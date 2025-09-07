@@ -15,6 +15,12 @@
   position: relative;
 }
 
+
+:global(.react-datepicker) {
+  font-size: 1.1rem;
+  width: 100%;
+  height: auto;
+}
 .buttons {
   display: flex;
   justify-content: space-between;
@@ -23,7 +29,7 @@
 .flag {
   position: absolute;
   right: 1rem;
-  top: 2.7rem;
+  top: 3rem;
   font-size: 2.8rem;
 }
 
@@ -41,4 +47,8 @@
 :global(.react-datepicker) {
   font-family: inherit;
   font-size: 1.2rem;
+}
+
+.form :disabled {
+  background-color: #ccc;
 }

@@ -15,13 +15,32 @@
   gap: 1.6rem;
 }
 
+/* @media (max-width: 767px) {
+  .user {
+    top: auto;
+    bottom: 5rem;
+  }
+} */
+/* 
+@media (min-width: 768px) and (max-width: 991px) {
+  .user {
+    top: auto;
+    bottom: -30.2rem;
+  }
+} */
+
 .user img {
-  border-radius: 100px;
+  width: 4rem;
   height: 4rem;
+  object-fit: cover;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
 }
 
 .user button {
-  background-color: var(--color-dark--2);
   border-radius: 7px;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -31,4 +50,14 @@
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
+  background-color: var(--color-brand--2);
+
+  &:hover {
+    background-color: #f0091a;
+  }
+  transition: var(--transition-medium);
+  -webkit-transition: var(--transition-medium);
+  -moz-transition: var(--transition-medium);
+  -ms-transition: var(--transition-medium);
+  -o-transition: var(--transition-medium);
 }

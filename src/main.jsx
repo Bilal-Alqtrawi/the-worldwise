@@ -1,11 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import { ToastContainer } from "react-toastify";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+const root = createRoot(document.getElementById("root"));
+
+root.render(
+  <StrictMode>
     <App />
-  </React.StrictMode>
+    <ToastContainer theme="dark" pauseOnHover={false} autoClose={2500} />
+  </StrictMode>
 );
-  

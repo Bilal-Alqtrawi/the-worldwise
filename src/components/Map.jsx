@@ -1,5 +1,7 @@
+import styles from "./Map.module.css";
+import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import {
   MapContainer,
   TileLayer,
@@ -8,60 +10,62 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import styles from "./Map.module.css";
-import "leaflet/dist/leaflet.css";
-import { useCities } from "../contexts/CitiesContext";
-import { useGeolocation } from "../hooks/useGeolocation";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "./Button";
-import useUrlPosition from "../hooks/useURLPosition";
+import { toast } from "react-toastify";
+import User from "../../src/components/User";
+import FlagEmojiToPNG from "./FlagEmojiToPNG";
 
-function convertToEmoji(countryCode) {
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt());
-  return String.fromCodePoint(...codePoints);
-}
+function Map({ cities }) {
+  const [isLoadingPosition, setIsLoadingPosition] = useState(false);
 
-function Map() {
-  const { cities } = useCities();
   const [mapPosition, setMapPosition] = useState([40, 0]);
-  const {
-    isLoading: isLoadingPosition,
-    position: geolocationPosition,
-    getPosition,
-  } = useGeolocation();
+  const [currentPosition, setCurrentPostion] = useState([]);
 
-  const [mapLat, mapLng] = useUrlPosition();
+  const [searchParams] = useSearchParams();
+  const mapLat = searchParams.get("lat") || 0;
+  const mapLng = searchParams.get("lng") || 0;
 
   useEffect(
     function () {
-      if (mapLat && mapLng) {
-        setMapPosition([mapLat, mapLng]);
-      }
+      if (mapLat && mapLng) setMapPosition([mapLat, mapLng]);
     },
     [mapLat, mapLng]
   );
 
-  useEffect(
-    function () {
-      if (geolocationPosition)
-        setMapPosition([geolocationPosition.lat, geolocationPosition.lng]);
-    },
-    [geolocationPosition]
-  );
-
-  console.log(mapLat, mapLng);
-
+  function getPosition() {
+    if (!navigator.geolocation) {
+      toast.error("Your browser does not support geolocation.");
+      return;
+    }
+    setIsLoadingPosition(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setMapPosition([position.coords.latitude, position.coords.longitude]);
+        setCurrentPostion([
+          position.coords.latitude,
+          position.coords.longitude,
+        ]);
+        setIsLoadingPosition(false);
+      },
+      (error) => {
+        console.error(error.message);
+        setIsLoadingPosition(false);
+      }
+    );
+  }
 
   return (
     <div className={styles.mapContainer}>
+      <User />
+
       <Button type="position" onClick={getPosition}>
         {isLoadingPosition ? "Loading..." : "Use your position"}
       </Button>
+
       <MapContainer
-        center={mapPosition} // need make it reactive to change when change city
-        zoom={6}
+        center={mapPosition}
+        zoom={13}
         scrollWheelZoom={true}
         className={styles.map}
       >
@@ -69,18 +73,32 @@ function Map() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
         />
-        {/* we change .org => .fr/hot => change color */}
-        {cities.map((city) => (
-          <Marker
-            key={city.id}
-            position={[city.position.lat, city.position.lng]}
-          >
-            <Popup>
-              <span>{city.emoji}</span>
-              <span>{city.cityName}</span>
-            </Popup>
+        {
+          // Just need who contains postion to mark it
+          cities
+            ?.filter((city) => city?.position)
+            .map((city) => (
+              <Marker
+                key={city.id}
+                position={[city.position?.lat, city.position.lng]}
+              >
+                <Popup>
+                  {city?.emoji && (
+                    // <span>{city?.emoji}</span>
+                    <span>
+                      <FlagEmojiToPNG flag={city.emoji} />
+                    </span>
+                  )}
+                  <span>{city?.cityName}</span>
+                </Popup>
+              </Marker>
+            ))
+        }
+        {currentPosition.length > 0 && (
+          <Marker position={currentPosition}>
+            <Popup>You are here</Popup>
           </Marker>
-        ))}
+        )}
         <ChangeCenter position={mapPosition} />
         <DetectClick />
       </MapContainer>
@@ -88,7 +106,7 @@ function Map() {
   );
 }
 
-// Own component
+// This way how it works to change postion
 function ChangeCenter({ position }) {
   const map = useMap();
   map.setView(position);
@@ -99,10 +117,9 @@ function DetectClick() {
   const navigate = useNavigate();
   useMapEvents({
     click: (e) => {
-      console.log(e); // not as like native object , coming from leaflet library
       navigate(`form?lat=${e.latlng.lat}&&lng=${e.latlng.lng}`);
     },
-  }); //
+  });
 }
 
 export default Map;

@@ -17,9 +17,5 @@
 @keyframes rotate {
   to {
     transform: rotate(1turn);
-    -webkit-transform: rotate(1turn);
-    -moz-transform: rotate(1turn);
-    -ms-transform: rotate(1turn);
-    -o-transform: rotate(1turn);
-}
+  }
 }

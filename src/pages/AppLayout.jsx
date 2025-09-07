@@ -1,18 +1,16 @@
-import Sidebar from "../components/Sidebar";
-import Map from "../components/Map";
+import Sidebar from "./Sidebar";
 import styles from "./AppLayout.module.css";
-import User from "../components/User";
+import Map from "../components/Map";
+import { useCities } from "../context/useCities";
 
 function AppLayout() {
+  const { cities } = useCities();
+
   return (
-    // The doing right it in App.jsx
-    // <ProtectedRoute>
-      <div className={styles.app}>
-        <Sidebar />
-        <Map />
-        <User />
-      </div>
-    // </ProtectedRoute>
+    <div className={`${styles.app} container`}>
+      <Sidebar />
+      <Map cities={cities} />
+    </div>
   );
 }
 
