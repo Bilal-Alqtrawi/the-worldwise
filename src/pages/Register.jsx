@@ -21,6 +21,8 @@ export default function Register() {
 
     const userData = Object.fromEntries(formData);
 
+    console.log(userData);
+
     if (!userData.fullName) {
       setErrors((errors) => ({
         ...errors,

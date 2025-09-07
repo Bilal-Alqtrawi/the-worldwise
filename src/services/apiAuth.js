@@ -13,13 +13,10 @@ export async function signup({ fullName, email, password, avatar }) {
   });
 
   if (error) {
-    if (error.message.includes("User already registered")) {
-      throw new Error(
-        "This email is already registered. Please log in instead."
-      );
-    }
+    console.error("Signup error details:", error);
     throw new Error(error.message);
   }
+
   return data;
 }
 

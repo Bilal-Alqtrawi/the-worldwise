@@ -1,21 +1,27 @@
 import supabase from "./supabase";
 
-export async function getCities() {
-  const { data: Cities, error } = await supabase.from("Cities").select("*");
+export async function getCities(userId) {
+  const { data: Cities, error } = await supabase
+    .from("Cities")
+    .select("*")
+    .eq("user_id", userId);
 
   if (error) {
     console.error(error);
     throw new Error("Cities could not be loaded");
   }
 
+  console.log(Cities);
+
   return Cities;
 }
 
-export async function getCity(id) {
+export async function getCity(id, userId) {
   const { data, error } = await supabase
     .from("Cities")
     .select("*")
     .eq("id", id)
+    .eq("user_id", userId)
     .single();
 
   if (error) {
@@ -26,10 +32,10 @@ export async function getCity(id) {
   return data;
 }
 
-export async function addCity(newCity) {
+export async function addCity(newCity, userId) {
   const { data, error } = await supabase
     .from("Cities")
-    .insert([{ ...newCity }])
+    .insert([{ ...newCity, user_id: userId }])
     .single();
   if (error) {
     console.error(error);
@@ -39,8 +45,12 @@ export async function addCity(newCity) {
   return data;
 }
 
-export async function deleteCity(id) {
-  const { error } = await supabase.from("Cities").delete().eq("id", id);
+export async function deleteCity(id, userId) {
+  const { error } = await supabase
+    .from("Cities")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId);
   if (error) {
     console.error(error);
     throw new Error("Error in Adding new City");

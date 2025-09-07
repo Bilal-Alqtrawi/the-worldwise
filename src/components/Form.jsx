@@ -99,7 +99,9 @@ function Form() {
       },
     };
 
-    createCity(newCity);
+    console.log(newCity);
+
+    await createCity(newCity);
 
     setTimeout(function () {
       navigate("/app");

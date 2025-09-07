@@ -1,5 +1,12 @@
-import { createContext, useCallback, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { addCity, deleteCity, getCities, getCity } from "../services/apiCities";
+import { getCurrentUser } from "../services/apiAuth";
 
 export const CitiesContext = createContext();
 
@@ -68,12 +75,15 @@ export default function CitiesProvider({ children }) {
 
   useEffect(function () {
     async function fetchCities() {
+      const user = await getCurrentUser();
+      if (!user) return;
+
       try {
         dispatch({
           type: "loading",
         });
 
-        const data = await getCities();
+        const data = await getCities(user.id);
 
         console.log(data);
         dispatch({
@@ -94,12 +104,14 @@ export default function CitiesProvider({ children }) {
 
   const fetchCity = useCallback(
     async function fetchCity(id) {
-      if (Number(id) === city?.id) return; // no need to all API again
+      const user = await getCurrentUser();
+
+      if (!user || Number(id) === city?.id) return; // no need to all API again
 
       try {
         dispatch({ type: "loading" });
 
-        const data = await getCity(id);
+        const data = await getCity(id, user.id);
 
         dispatch({
           type: "city/loaded",
@@ -116,17 +128,19 @@ export default function CitiesProvider({ children }) {
   );
 
   async function createCity(newCity) {
-    console.log(newCity);
+    const user = await getCurrentUser();
+    if (!user) return;
+
     try {
       dispatch({
         type: "loading",
       });
 
-      await addCity(newCity);
+      const data = await addCity(newCity, user.id);
 
       dispatch({
         type: "city/created",
-        payload: newCity,
+        payload: data || newCity,
       });
     } catch (error) {
       dispatch({
@@ -137,10 +151,12 @@ export default function CitiesProvider({ children }) {
   }
 
   async function removeCity(id) {
+    const user = await getCurrentUser();
+    if (!user) return;
     try {
       dispatch({ type: "loading" });
 
-      await deleteCity(id);
+      await deleteCity(id, user.id);
       dispatch({
         type: "city/deleted",
         payload: id,
