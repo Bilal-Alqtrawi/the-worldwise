@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { login } from "../services/apiAuth";
 import { Link, useNavigate } from "react-router-dom";
 
-const DEMO_EMAIL = "demo@yourmail.com";
+const DEMO_EMAIL = "demo@worldwise-demo.com";
 const DEMO_PASSWORD = "DemoPass123";
 
 export default function Login() {
