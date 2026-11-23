@@ -311,3 +311,31 @@ form input + span {
 .form button:active {
   transform: translateY(-1px);
 }
+
+/* Demo credentials line (click to fill the form) */
+.form .demo {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: -1rem 0 0;
+  border-radius: 0;
+  color: var(--color-light--1);
+  font-size: 1.3rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: center;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.form .demo::before {
+  display: none;
+}
+
+.form .demo:hover {
+  transform: none;
+  box-shadow: none;
+  color: var(--color-brand--2);
+  text-decoration: underline;
+}

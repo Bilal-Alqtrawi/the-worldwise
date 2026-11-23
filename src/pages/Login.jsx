@@ -6,6 +6,9 @@ import { toast } from "react-toastify";
 import { login } from "../services/apiAuth";
 import { Link, useNavigate } from "react-router-dom";
 
+const DEMO_EMAIL = "demo@yourmail.com";
+const DEMO_PASSWORD = "DemoPass123";
+
 export default function Login() {
   const navigate = useNavigate();
 
@@ -86,6 +89,19 @@ export default function Login() {
           <div>
             <Button type="primary">Login</Button>
           </div>
+
+          <button
+            type="button"
+            className={styles.demo}
+            title="Click to fill in the demo account"
+            onClick={() => {
+              setEmail(DEMO_EMAIL);
+              setPassword(DEMO_PASSWORD);
+              setErrors({ email: null, password: null });
+            }}
+          >
+            Demo: {DEMO_EMAIL} / {DEMO_PASSWORD}
+          </button>
 
           <div className={styles["sign-up-message"]}>
             <span>You don&apos;t have account ? </span>
